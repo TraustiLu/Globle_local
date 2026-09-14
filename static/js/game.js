@@ -29,14 +29,18 @@ function readPractice() {
 const app = {
   mode: "hourly", hourKey: hourlyKey(), countries: [], countryLookup: new Map(),
   hourlyAnswer: null, practice: readPractice(), guesses: [], guessedIds: new Set(),
-  won: false, layers: new Map(),
+  won: false, layers: new Map(), centerMarkers: [],
 };
 
 const map = L.map("map", {
-  center: [18, 5], zoom: 2, minZoom: 1, maxZoom: 6,
-  worldCopyJump: true, attributionControl: false,
+  center: [18, 5], zoom: 2, minZoom: 1, maxZoom: 6, zoomSnap: 0.25,
+  worldCopyJump: true, attributionControl: false, scrollWheelZoom: false,
 }).setView([18, 5], 2);
 map.setMaxBounds([[-85, -240], [90, 240]]);
+
+function fitWorld() {
+  map.setView([16, 0], 1.25, { animate: false });
+}
 
 function countryId(feature) { return feature.properties.ADM0_A3 || feature.properties.ISO_A3; }
 
@@ -71,6 +75,9 @@ function resetBoard() {
   for (const layer of app.layers.values()) {
     layer.setStyle({ fillColor: "#f6f4ea", fillOpacity: 0.92, color: "#aebdb4", weight: 0.65 });
   }
+  for (const marker of app.centerMarkers) marker.remove();
+  app.centerMarkers = [];
+  fitWorld();
   updateCount();
 }
 
@@ -88,11 +95,19 @@ function renderGuess(result) {
   const color = temperatureColor(result.heat, result.won);
   const item = document.createElement("li");
   item.className = "guess-item";
-  item.innerHTML = '<span class="color-dot" aria-hidden="true"></span><span class="country-name"></span><span class="distance"></span><span class="direction"></span>';
+  item.innerHTML = '<span class="color-dot" aria-hidden="true"></span><span class="country-name"></span><span class="distance"></span><span class="direction"><span class="mini-compass" aria-hidden="true"><span class="compass-n">N</span><span class="compass-needle"></span></span><span class="direction-text"></span></span>';
   item.querySelector(".color-dot").style.background = color;
   item.querySelector(".country-name").textContent = result.country.name;
   item.querySelector(".distance").textContent = result.won ? "Found!" : `${result.distanceKm.toLocaleString()} km`;
-  item.querySelector(".direction").textContent = result.won ? "✓ Correct" : `${directionArrow(result.direction)} ${result.direction}`;
+  const compass = item.querySelector(".mini-compass");
+  const directionText = item.querySelector(".direction-text");
+  if (result.won) {
+    compass.classList.add("correct");
+    directionText.textContent = "Correct";
+  } else {
+    item.querySelector(".compass-needle").style.transform = `translateX(-50%) rotate(${result.bearing}deg)`;
+    directionText.textContent = `${directionArrow(result.direction)} ${result.direction}`;
+  }
   elements.list.prepend(item);
 
   const layer = app.layers.get(result.country.id);
@@ -100,6 +115,18 @@ function renderGuess(result) {
     layer.setStyle({ fillColor: color, fillOpacity: 0.9, color: "#263c30", weight: 1.2 });
     layer.bindTooltip(`${result.country.name}: ${result.won ? "correct" : `${result.distanceKm.toLocaleString()} km`}`);
     if (result.won) map.fitBounds(layer.getBounds(), { maxZoom: 4, padding: [35, 35] });
+  }
+  const country = app.countries.find(({ id }) => id === result.country.id);
+  if (country) {
+    const marker = L.circleMarker([country.latitude, country.longitude], {
+      radius: result.won ? 6 : 4.5,
+      color: "#ffffff",
+      weight: 2,
+      fillColor: result.won ? "#146c3c" : "#17251d",
+      fillOpacity: 1,
+      interactive: false,
+    }).addTo(map);
+    app.centerMarkers.push(marker);
   }
   updateCount();
 }
@@ -224,6 +251,7 @@ elements.newGameButton.addEventListener("click", () => startPractice(true));
 document.querySelector("#help-button").addEventListener("click", () => elements.helpDialog.showModal());
 document.querySelector("#close-help").addEventListener("click", () => elements.helpDialog.close());
 document.querySelector("#close-win").addEventListener("click", () => elements.winDialog.close());
+document.querySelector("#reset-map-button").addEventListener("click", fitWorld);
 elements.shareButton.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(shareText());
@@ -251,6 +279,7 @@ async function initialize() {
       style: { fillColor: "#f6f4ea", fillOpacity: 0.92, color: "#aebdb4", weight: 0.65 },
       onEachFeature(feature, layer) { app.layers.set(countryId(feature), layer); },
     }).addTo(map);
+    fitWorld();
     showMode("hourly");
     restoreState();
     updateClock();

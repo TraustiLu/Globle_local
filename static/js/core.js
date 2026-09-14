@@ -79,12 +79,13 @@ export function haversineDistance(first, second) {
 
 export function initialBearing(first, second) {
   const radians = (degrees) => degrees * Math.PI / 180;
-  const lat1 = radians(first.latitude);
-  const lat2 = radians(second.latitude);
-  const deltaLon = radians(second.longitude - first.longitude);
-  const x = Math.sin(deltaLon) * Math.cos(lat2);
-  const y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLon);
-  return (Math.atan2(x, y) * 180 / Math.PI + 360) % 360;
+  const deltaLat = second.latitude - first.latitude;
+  let deltaLon = second.longitude - first.longitude;
+  if (deltaLon > 180) deltaLon -= 360;
+  if (deltaLon < -180) deltaLon += 360;
+  const meanLatitude = radians((first.latitude + second.latitude) / 2);
+  const mapEastWest = deltaLon * Math.cos(meanLatitude);
+  return (Math.atan2(mapEastWest, deltaLat) * 180 / Math.PI + 360) % 360;
 }
 
 export function compassDirection(bearing) {
@@ -112,10 +113,12 @@ export function hourlyCountry(countries, key, seed = "worldly-hourly-v1") {
 export function guessResult(guess, answer) {
   const won = guess.id === answer.id;
   const distance = haversineDistance(guess, answer);
+  const bearing = won ? null : initialBearing(guess, answer);
   return {
     country: { id: guess.id, name: guess.name },
     distanceKm: Math.round(distance),
-    direction: won ? null : compassDirection(initialBearing(guess, answer)),
+    direction: won ? null : compassDirection(bearing),
+    bearing: won ? null : Math.round(bearing),
     heat: won ? 1 : Math.max(0, 1 - distance / MAX_DISTANCE_KM),
     won,
     ...(won ? { answer: answer.name } : {}),

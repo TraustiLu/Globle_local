@@ -13,6 +13,7 @@ test("country data produces 195 playable countries and aliases", async () => {
   const lookup = buildCountryLookup(countries);
   assert.equal(countries.length, 195);
   assert.equal(new Set(countries.map(({ id }) => id)).size, countries.length);
+  assert.ok(countries.every(({ latitude, longitude }) => Number.isFinite(latitude) && Number.isFinite(longitude)));
   assert.equal(lookup.get("usa").name, "United States of America");
   assert.equal(lookup.get("cote d ivoire").name, "Ivory Coast");
 });
@@ -25,6 +26,12 @@ test("distance, bearing, and direction are accurate", () => {
   assert.ok(Math.abs(haversineDistance(paris, london) - 344) < 2);
   assert.ok(Math.abs(initialBearing(paris, london) - 330) < 2);
   assert.equal(compassDirection(initialBearing(paris, london)), "northwest");
+});
+
+test("map directions use the shortest route across the date line", () => {
+  const westOfLine = { latitude: 0, longitude: 170 };
+  const eastOfLine = { latitude: 0, longitude: -170 };
+  assert.equal(compassDirection(initialBearing(westOfLine, eastOfLine)), "east");
 });
 
 test("the hourly key uses UTC and changes on the hour", () => {

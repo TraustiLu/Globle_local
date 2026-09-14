@@ -49,23 +49,26 @@
       <p class="status" id="status" role="status" aria-live="polite"></p>
     </section>
 
-    <section class="map-card" aria-label="World map">
-      <div id="map" role="application" aria-label="Interactive map showing your country guesses"></div>
-      <div class="map-key" aria-label="Distance color scale">
-        <span>Far</span><span class="gradient" aria-hidden="true"></span><span>Close</span>
-      </div>
-      <p class="attribution">Country boundaries: Natural Earth, public domain.</p>
-    </section>
+    <div class="game-board">
+      <section class="map-card" aria-label="World map">
+        <button class="reset-map-button" id="reset-map-button" type="button">Fit world</button>
+        <div id="map" role="application" aria-label="Interactive map showing your country guesses"></div>
+        <div class="map-key" aria-label="Distance color scale">
+          <span>Far</span><span class="gradient" aria-hidden="true"></span><span>Close</span>
+        </div>
+        <p class="attribution">Dots mark each country's reference center. Boundaries: Natural Earth.</p>
+      </section>
 
-    <section class="results" aria-labelledby="results-title">
-      <div class="results-heading">
-        <h2 id="results-title">Your guesses</h2>
-        <span id="guess-count">0 guesses</span>
-      </div>
-      <ol id="guess-list" class="guess-list">
-        <li class="empty-state" id="empty-state">Your first guess will appear here.</li>
-      </ol>
-    </section>
+      <section class="results" aria-labelledby="results-title">
+        <div class="results-heading">
+          <h2 id="results-title">Your guesses</h2>
+          <span id="guess-count">0 guesses</span>
+        </div>
+        <ol id="guess-list" class="guess-list">
+          <li class="empty-state" id="empty-state">Your first guess will appear here.</li>
+        </ol>
+      </section>
+    </div>
   </main>
 
   <dialog id="help-dialog" aria-labelledby="help-title">
