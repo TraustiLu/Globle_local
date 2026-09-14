@@ -1,6 +1,7 @@
 import {
   buildCountryLookup,
   countriesFromGeoJSON,
+  distanceColor,
   guessResult,
   hourlyCountry,
   hourlyKey,
@@ -44,12 +45,6 @@ function fitWorld() {
 
 function countryId(feature) { return feature.properties.ADM0_A3 || feature.properties.ISO_A3; }
 
-function temperatureColor(heat, won = false) {
-  if (won) return "#18a558";
-  const hue = 215 - Math.max(0, Math.min(1, heat)) * 207;
-  return `hsl(${hue} 70% 51%)`;
-}
-
 function currentAnswer() {
   if (app.mode === "hourly") return app.hourlyAnswer;
   return app.countries.find((country) => country.id === app.practice?.answerId);
@@ -92,7 +87,7 @@ function directionArrow(direction) {
 
 function renderGuess(result) {
   document.querySelector("#empty-state")?.remove();
-  const color = temperatureColor(result.heat, result.won);
+  const color = distanceColor(result.distanceKm);
   const item = document.createElement("li");
   item.className = "guess-item";
   item.innerHTML = '<span class="color-dot" aria-hidden="true"></span><span class="country-name"></span><span class="distance"></span><span class="direction"><span class="mini-compass" aria-hidden="true"><span class="compass-n">N</span><span class="compass-needle"></span></span><span class="direction-text"></span></span>';
@@ -134,10 +129,9 @@ function renderGuess(result) {
 function shareText() {
   const blocks = app.guesses.map((guess) => {
     if (guess.won) return "🟩";
-    if (guess.heat > 0.75) return "🟥";
-    if (guess.heat > 0.5) return "🟧";
-    if (guess.heat > 0.25) return "🟨";
-    return "🟦";
+    if (guess.distanceKm <= 1000) return "🟨";
+    if (guess.distanceKm < 3000) return "🟧";
+    return "🟥";
   }).join("");
   const label = app.mode === "hourly" ? app.hourKey : "Practice";
   const pageUrl = location.protocol.startsWith("http") ? `\n${location.origin}${location.pathname}` : "";

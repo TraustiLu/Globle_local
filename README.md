@@ -11,8 +11,9 @@ The project is designed for GitHub Pages. It uses only HTML, CSS, JavaScript, Le
 - 195 playable countries and common aliases
 - Unlimited practice games
 - Interactive Leaflet map with local country boundaries
+- Red-to-yellow distance scale from 3,000 km to 0 km, with farther guesses held at red
 - Map-centered country reference points, center markers, and visual compass clues
-- Intuitive flat-map directions with date-line handling and great-circle distances
+- True initial great-circle compass bearings and great-circle distances
 - Side-by-side map and scrollable guess history on larger screens
 - Duplicate and invalid-guess handling
 - Progress saved across refreshes in browser storage

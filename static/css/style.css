@@ -143,7 +143,7 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .reset-map-button { position: absolute; z-index: 500; top: 1.35rem; right: 1.35rem; border: 1px solid rgba(20,61,37,.18); border-radius: 999px; background: rgba(255,255,255,.92); color: var(--green-dark); padding: .5rem .75rem; font-size: .72rem; font-weight: 800; box-shadow: 0 3px 12px rgba(20,61,37,.12); }
 .leaflet-container { font-family: inherit; }
 .map-key { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; color: var(--muted); font-size: .72rem; margin: .65rem .25rem 0; }
-.gradient { width: 130px; height: 7px; border-radius: 999px; background: linear-gradient(90deg, hsl(215 58% 53%), hsl(8 78% 51%)); }
+.gradient { width: 130px; height: 7px; border-radius: 999px; background: linear-gradient(90deg, hsl(4 82% 52%), hsl(50 82% 52%)); }
 .attribution { color: #7c8981; font-size: .65rem; margin: .25rem .25rem 0; text-align: right; }
 
 .results { min-width: 0; height: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 1.15rem; box-shadow: var(--shadow); }
@@ -172,8 +172,8 @@ dialog h2 { font-family: Georgia, serif; font-size: 2rem; margin: 0 0 .75rem; }
 .dialog-close { position: absolute; top: 1rem; right: 1rem; font-size: 1.4rem; }
 dialog li { margin: .65rem 0; }
 .example-color { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: .35rem; }
-.example-color.far { background: hsl(215 58% 53%); }
-.example-color.close { background: hsl(8 78% 51%); }
+.example-color.far { background: hsl(4 82% 52%); }
+.example-color.close { background: hsl(50 82% 52%); }
 .win-symbol { color: #d39b18; font-size: 2.4rem; }
 .share-result { background: #f1f5ef; border-radius: 12px; padding: 1rem; white-space: pre-wrap; font: 700 .9rem/1.5 ui-monospace, monospace; }
 .dialog-actions { display: flex; gap: .65rem; }

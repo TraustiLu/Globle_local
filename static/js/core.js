@@ -1,4 +1,5 @@
 export const MAX_DISTANCE_KM = Math.PI * 6371.0088;
+export const GRADIENT_DISTANCE_KM = 3000;
 
 export const ALIASES = {
   america: "United States of America",
@@ -79,18 +80,24 @@ export function haversineDistance(first, second) {
 
 export function initialBearing(first, second) {
   const radians = (degrees) => degrees * Math.PI / 180;
-  const deltaLat = second.latitude - first.latitude;
-  let deltaLon = second.longitude - first.longitude;
-  if (deltaLon > 180) deltaLon -= 360;
-  if (deltaLon < -180) deltaLon += 360;
-  const meanLatitude = radians((first.latitude + second.latitude) / 2);
-  const mapEastWest = deltaLon * Math.cos(meanLatitude);
-  return (Math.atan2(mapEastWest, deltaLat) * 180 / Math.PI + 360) % 360;
+  const lat1 = radians(first.latitude);
+  const lat2 = radians(second.latitude);
+  const deltaLon = radians(second.longitude - first.longitude);
+  const eastWest = Math.sin(deltaLon) * Math.cos(lat2);
+  const northSouth = Math.cos(lat1) * Math.sin(lat2)
+    - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLon);
+  return (Math.atan2(eastWest, northSouth) * 180 / Math.PI + 360) % 360;
 }
 
 export function compassDirection(bearing) {
   const directions = ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"];
   return directions[Math.floor((bearing + 22.5) / 45) % 8];
+}
+
+export function distanceColor(distanceKm) {
+  const progress = 1 - Math.max(0, Math.min(GRADIENT_DISTANCE_KM, distanceKm)) / GRADIENT_DISTANCE_KM;
+  const hue = 4 + progress * 46;
+  return `hsl(${hue.toFixed(1)} 82% 52%)`;
 }
 
 export function hourlyKey(moment = new Date()) {
@@ -119,7 +126,7 @@ export function guessResult(guess, answer) {
     distanceKm: Math.round(distance),
     direction: won ? null : compassDirection(bearing),
     bearing: won ? null : Math.round(bearing),
-    heat: won ? 1 : Math.max(0, 1 - distance / MAX_DISTANCE_KM),
+    heat: Math.max(0, 1 - distance / GRADIENT_DISTANCE_KM),
     won,
     ...(won ? { answer: answer.name } : {}),
   };

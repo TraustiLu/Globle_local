@@ -24,7 +24,7 @@
     <section class="hero" aria-labelledby="game-title">
       <p class="eyebrow" id="mode-label">THIS HOUR'S MYSTERY COUNTRY</p>
       <h1 id="game-title">Where in the world?</h1>
-      <p class="intro">Guess a country. The warmer the color, the closer you are.</p>
+      <p class="intro">Guess a country. Red shifts toward yellow inside 3,000 km.</p>
 
       <div class="round-information">
         <span id="round-label">Hourly challenge</span>
@@ -54,7 +54,7 @@
         <button class="reset-map-button" id="reset-map-button" type="button">Fit world</button>
         <div id="map" role="application" aria-label="Interactive map showing your country guesses"></div>
         <div class="map-key" aria-label="Distance color scale">
-          <span>Far</span><span class="gradient" aria-hidden="true"></span><span>Close</span>
+          <span>3,000+ km</span><span class="gradient" aria-hidden="true"></span><span>0 km</span>
         </div>
         <p class="attribution">Dots mark each country's reference center. Boundaries: Natural Earth.</p>
       </section>
@@ -75,10 +75,10 @@
     <button class="dialog-close" id="close-help" type="button" aria-label="Close instructions">×</button>
     <p class="eyebrow">HOW TO PLAY</p>
     <h2 id="help-title">Find the mystery country</h2>
-    <p>Enter any country. It will be colored on the map based on how close it is to the hidden answer.</p>
+    <p>Enter any country. Guesses at least 3,000 km away are red; inside that range, they gradually shift through orange to yellow.</p>
     <ul>
-      <li><span class="example-color far"></span> Blue countries are far away.</li>
-      <li><span class="example-color close"></span> Red countries are very close.</li>
+      <li><span class="example-color far"></span> Red means 3,000 km away or farther.</li>
+      <li><span class="example-color close"></span> Yellow means extremely close.</li>
       <li>The distance and compass direction give you an extra clue.</li>
     </ul>
     <p>Everyone receives the same country each UTC hour. Practice mode lets you play as often as you like.</p>
